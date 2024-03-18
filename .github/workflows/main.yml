@@ -27,7 +27,7 @@ jobs:
           pr_repo=$(jq -r '.repository.full_name' $GITHUB_EVENT_PATH)
           
           # Construct input for GPT-3
-          input='{"model": "pt-3.5-turbo-0125", "messages": [{"role": "system", "prompt": "$pr_title\n\n$pr_body"}]}'
+          input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", "prompt": "$pr_title\n\n$pr_body"}]}'
           
           # Call OpenAI API to generate review
           response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "$input" https://api.openai.com/v1/completions)
