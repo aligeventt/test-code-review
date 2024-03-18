@@ -26,11 +26,14 @@ jobs:
           pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
           pr_repo=$(jq -r '.repository.full_name' $GITHUB_EVENT_PATH)
 
-          echo "$pr_repo"
+          echo "Title: $pr_title"
+          echo "Body: $pr_body"
+          echo "Number: $pr_number"
+          echo "Repo: $pr_repo"
 
           # Fetch pull request diff
           pr_diff=$(curl -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.diff" "https://api.github.com/repos/$pr_repo/pulls/$pr_number")
-          
+          echo "Diff: $pr_diff"
           
           # Construct input for GPT-3
           input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", 
