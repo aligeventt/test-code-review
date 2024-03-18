@@ -19,6 +19,7 @@ jobs:
         env:
           GPT_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_MODEL: "gpt-3.5-turbo"
         run: |
           # Fetch pull request details
           pr_title=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)
