@@ -35,8 +35,11 @@ jobs:
           pr_diff=$(curl -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.diff" "https://api.github.com/repos/$pr_repo/pulls/$pr_number")
           echo "Diff: $pr_diff"
           
+          # Escape special characters in the diff content
+          pr_diff_escaped=$(echo "$pr_diff" | jq -s -R -r @uri)
+          
           # Construct input for GPT-3
-          input="{\"model\": \"gpt-3.5-turbo-0125\", \"messages\": [{\"role\": \"system\",\"content\": \"Your task is to create a review for the following pull request: PR Title: $pr_title\n\nPR Body: $pr_body\n\n Review the following code difference and take the PR Title abd PR Body into account when writing the response: \\n\\n\`\`\`\n$pr_diff\n\`\`\`.\\n\\nDo not give positive comments or compliments. Provide comments and suggestions ONLY if there is something to improve, otherwise reviews should be an empty array. Write the comment in GitHub Markdown format. Use the given description only for the overall context and only comment the code. IMPORTANT: NEVER suggest adding comments to the code\"}]}"
+          input="{\"model\": \"gpt-3.5-turbo-0125\", \"messages\": [{\"role\": \"system\",\"content\": \"Your task is to create a review for the following pull request: PR Title: $pr_title\n\nPR Body: $pr_body\n\n Review the following code difference and take the PR Title and PR Body into account when writing the response: \\n\\n\`\`\`\n$pr_diff_escaped\n\`\`\`.\\n\\nDo not give positive comments or compliments. Provide comments and suggestions ONLY if there is something to improve, otherwise reviews should be an empty array. Write the comment in GitHub Markdown format. Use the given description only for the overall context and only comment the code. IMPORTANT: NEVER suggest adding comments to the code\"}]}"
 
           # Call OpenAI API to generate review
           response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "$input" https://api.openai.com/v1/chat/completions)
