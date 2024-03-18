@@ -32,7 +32,11 @@ jobs:
           # Call OpenAI API to generate review
           response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "{\"prompt\": \"$input\"}" https://api.openai.com/v1/completions)
           
-          # Extract review from API response if choices array is not empty
+          # Print response for debugging
+          echo "OpenAI API Response:"
+          echo "$response"
+          
+          #Extract review from API response if choices array is not empty
           if [[ $(echo "$response" | jq -r '.choices | length') -gt 0 ]]; then
             review=$(echo "$response" | jq -r '.choices[].text')
             echo "Generated Review:"
