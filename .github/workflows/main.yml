@@ -1,22 +1,45 @@
-name: AI Code Reviewer
+name: PR Review with GPT-3
 
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
-permissions: write-all
-jobs:
-  review:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+    types: [opened]
 
-      - name: AI Code Reviewer
-        uses: aligeventt/ai-codereviewer@main
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_API_MODEL: "gpt-3.5-turbo"
-          exclude: "**/*.json, **/*.md"
+jobs:
+  review_pr:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install # or any other dependency setup
+
+      - name: Generate review with GPT-3
+        env:
+          GPT_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          # Fetch pull request details
+          pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
+          pr_title=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH)
+          pr_body=$(jq -r '.pull_request.body' $GITHUB_EVENT_PATH)
+          
+          # Construct input for GPT-3
+          input="Pull request title: $pr_title\nPull request description: $pr_body"
+          
+          # Call OpenAI API to generate review
+          response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "{\"prompt\": \"$input\"}" https://api.openai.com/v1/completions)
+          
+          # Extract review from API response
+          review=$(echo $response | jq -r '.choices[].text')
+          
+          # Print review
+          echo "Generated Review:"
+          echo "$review"
+
+          # Comment on the pull request with the generated review
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"body\": \"$review\"}" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${pr_number}/comments"
