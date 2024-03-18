@@ -26,11 +26,14 @@ jobs:
           pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
           pr_repo=$(jq -r '.repository.full_name' $GITHUB_EVENT_PATH)
 
+
+          # Fetch pull request diff
+          pr_diff=$(curl -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.diff" "https://api.github.com/repos/$pr_repo/pulls/$pr_number")
           
           
           # Construct input for GPT-3
           input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", 
-          "content": "Your task is to create a review for the following pull request: $pr_title\n\n$pr_body
+          "content": "Your task is to create a review for the following pull request: $pr_title\n\n$pr_body\n\n$pr_diff
                       Do not give positive comments or compliments.
                       Provide comments and suggestions ONLY if there is something to improve, otherwise "reviews" should be an empty array.
                       Write the comment in GitHub Markdown format.
