@@ -26,6 +26,7 @@ jobs:
           pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
           pr_repo=$(jq -r '.repository.full_name' $GITHUB_EVENT_PATH)
 
+          echo "$pr_repo"
 
           # Fetch pull request diff
           pr_diff=$(curl -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github.v3.diff" "https://api.github.com/repos/$pr_repo/pulls/$pr_number")
