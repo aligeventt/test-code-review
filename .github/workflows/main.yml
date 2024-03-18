@@ -30,7 +30,7 @@ jobs:
           
           # Construct input for GPT-3
           input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", 
-          "content": "Your task is to create a review for the following pull request: creta$pr_title\n\n$pr_body
+          "content": "Your task is to create a review for the following pull request: $pr_title\n\n$pr_body
                       Do not give positive comments or compliments.
                       Provide comments and suggestions ONLY if there is something to improve, otherwise "reviews" should be an empty array.
                       Write the comment in GitHub Markdown format.
