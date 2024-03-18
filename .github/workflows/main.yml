@@ -30,7 +30,7 @@ jobs:
           input="Pull request title: $pr_title\nPull request description: $pr_body"
           
           # Call OpenAI API to generate review
-          response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "{\"prompt\": \"$input\", \"model\": \"gpt-3.5-turbo\"}" https://api.openai.com/v1/completions)
+          response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "{\"prompt\": \"$input\", \"model\": \"gpt-3.5-turbo\"}" https://api.openai.com/v1/chat/completions)
           
           # Print response for debugging
           echo "OpenAI API Response:"
