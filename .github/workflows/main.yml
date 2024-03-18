@@ -41,6 +41,7 @@ jobs:
           
           # Call OpenAI API to generate review
           response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "$input" https://api.openai.com/v1/chat/completions)
+          echo "INPUT TO SEND TO OPENAI: $input"
           
           # Print response for debugging
           echo "OpenAI API Response:"
