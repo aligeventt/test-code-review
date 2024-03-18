@@ -49,9 +49,10 @@ jobs:
             echo "Generated Review:"
             echo "$review"
             data='{"body": "$review"}'
+            echo "$data"
             
             # Comment on the pull request with the generated review
-            curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d "$data" "https://api.github.com/repos/$pr_repo/issues/$pr_number/comments"
+            curl -X POST -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" -d "$data" "https://api.github.com/repos/$pr_repo/issues/$pr_number/comments"
           else
             echo "No review generated."
           fi
