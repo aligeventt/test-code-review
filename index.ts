@@ -1,11 +1,13 @@
-const world = 'world';
+const a = 'x';
+const b = 'y';
+const c = 'z';
 
 function f<T>(a1: T, a2: T, a3: T): boolean {
     return a2 <= a1 && a1 <= a3;
 }
 
-export function x(who: string = world): string {
-    return `Hello ${who}! `;
+export function x(t: string = a): string {
+    return `Hello ${t}! `;
 }
 
 
