@@ -25,9 +25,18 @@ jobs:
           pr_body=$(jq -r '.pull_request.body' $GITHUB_EVENT_PATH)
           pr_number=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
           pr_repo=$(jq -r '.repository.full_name' $GITHUB_EVENT_PATH)
+
+          
           
           # Construct input for GPT-3
-          input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", "content": "$pr_title\n\n$pr_body"}]}'
+          input='{"model": "gpt-3.5-turbo-0125", "messages": [{"role": "system", 
+          "content": "Your task is to create a review for the following pull request: creta$pr_title\n\n$pr_body
+                      Do not give positive comments or compliments.
+                      Provide comments and suggestions ONLY if there is something to improve, otherwise "reviews" should be an empty array.
+                      Write the comment in GitHub Markdown format.
+                      Use the given description only for the overall context and only comment the code.
+                      IMPORTANT: NEVER suggest adding comments to the code
+          "}]}'
           
           # Call OpenAI API to generate review
           response=$(curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $GPT_API_KEY" -d "$input" https://api.openai.com/v1/chat/completions)
