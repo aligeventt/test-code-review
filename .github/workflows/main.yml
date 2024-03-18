@@ -48,7 +48,7 @@ jobs:
             review=$(echo "$response" | jq '.choices[].message.content')
             echo "Generated Review:"
             echo "$review"
-            data="{\"body\":\"$review\"}"
+            data="{\"body\":$review}"
             echo "$data"
             
             # Comment on the pull request with the generated review
