@@ -48,9 +48,10 @@ jobs:
             review=$(echo "$response" | jq '.choices[].message.content')
             echo "Generated Review:"
             echo "$review"
+            data='{"body": "$review"}'
             
             # Comment on the pull request with the generated review
-            curl -v -X POST -H "Authorization: token $GITHUB_TOKEN" -d "{\"body\": \"$review\"}" "https://api.github.com/repos/$pr_repo/issues/$pr_number/comments"
+            curl -X POST -H "Authorization: token $GITHUB_TOKEN" -d "$data" "https://api.github.com/repos/$pr_repo/issues/$pr_number/comments"
           else
             echo "No review generated."
           fi
